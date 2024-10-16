@@ -1,6 +1,6 @@
 ﻿using DevFreela.Application.Models.ProjectModel;
-using DevFreela.Application.Models.ProjetctModel;
 using DevFreela.Application.Models.Result;
+using DevFreela.Core.Entities;
 using DevFreela.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 
@@ -9,9 +9,9 @@ namespace DevFreela.Application.Services
     public interface IProjectService
     {
         ResultViewModel<List<ProjectItemViewModel>> GetAll(string search = "", int page = 0, int size = 3);
-        ResultViewModel<ProjectViewModel> GetById(int id);
-        ResultViewModel<int> Insert(CreateProjectInputModel model);
-        ResultViewModel Update(UpdateProjectInputModel model);
+        ResultViewModel<ProjectItemViewModel> GetById(int id);
+        ResultViewModel Insert(CreateProjectInputModel model);
+        ResultViewModel Update(int id, UpdateProjectInputModel model);
         ResultViewModel Delete(int id);
         ResultViewModel Start(int id);
         ResultViewModel Complete(int id);
@@ -30,12 +30,31 @@ namespace DevFreela.Application.Services
 
         public ResultViewModel Complete(int id)
         {
-            throw new NotImplementedException();
+            var project = _dbContext.Projects.SingleOrDefault(p => p.Id == id);
+            if (project == null)
+            {
+                return ResultViewModel.Error("Não foi possível concluir a operação");
+            }
+
+            project.Complete();
+            _dbContext.Update(project);
+            _dbContext.SaveChanges();
+
+            return ResultViewModel.Sucess();
         }
 
         public ResultViewModel Delete(int id)
         {
-            throw new NotImplementedException();
+            var project = _dbContext.Projects.SingleOrDefault(p => p.Id == id);
+            if (project == null)
+            {
+                return ResultViewModel.Error($"Não foi possivel excluir o registro {id}");
+            }
+            project.SetAsDeleted();
+            _dbContext.Update(project);
+            _dbContext.SaveChanges();
+
+            return ResultViewModel.Sucess();
         }
 
         public ResultViewModel<List<ProjectItemViewModel>> GetAll(string search = "", int page = 0, int size = 3)
@@ -53,14 +72,32 @@ namespace DevFreela.Application.Services
             return ResultViewModel<List<ProjectItemViewModel>>.Sucess(model);
         }
 
-        public ResultViewModel<ProjectViewModel> GetById(int id)
+        public ResultViewModel<ProjectItemViewModel> GetById(int id)
         {
-            throw new NotImplementedException();
+            var project = _dbContext.Projects
+                         .Include(p => p.Client)
+                         .Include(p => p.Freelancer)
+                         .Include(p => p.Comments)
+                         .SingleOrDefault(p => p.Id == id);
+            var model = ProjectItemViewModel.FromEntity(project);
+
+            return ResultViewModel<ProjectItemViewModel>.Sucess(model);
         }
 
-        public ResultViewModel<int> Insert(CreateProjectInputModel model)
+        public ResultViewModel Insert(CreateProjectInputModel model)
         {
-            throw new NotImplementedException();
+            var project = new Project(
+                model.Title,
+                model.Description,
+                model.IdClient,
+                model.IdFreelancer,
+                model.TotalCost
+            );
+            _dbContext.Projects.AddAsync(project);
+
+            _dbContext.SaveChangesAsync();
+
+            return ResultViewModel.Sucess();
         }
 
         public ResultViewModel InsertComment(int id, CreateProjectCommentInputModel model)
@@ -70,14 +107,35 @@ namespace DevFreela.Application.Services
 
         public ResultViewModel Start(int id)
         {
-            throw new NotImplementedException();
+            var project = _dbContext.Projects.SingleOrDefault(p => p.Id == id);
+            if (project == null)
+            {
+                return ResultViewModel.Error($"Projeto não encontrado com a {id}");
+            }
+
+            project.Start();
+            _dbContext.Update(project);
+            _dbContext.SaveChanges();
+            return ResultViewModel.Sucess();
         }
 
-        public ResultViewModel Update(UpdateProjectInputModel model)
+        public ResultViewModel Update(int id, UpdateProjectInputModel model)
         {
-            throw new NotImplementedException();
-        }
+            var project = _dbContext.Projects.SingleOrDefault(p => p.Id == id);
 
+            if (project is null)
+            {
+                return ResultViewModel.Error("Projeto não existe");
+            }
+
+            project.Update(model.Title, model.Description, model.TotalCost);
+
+            _dbContext.Update(project);
+            _dbContext.SaveChanges();
+
+
+            return ResultViewModel.Sucess();
+        }
 
 
     }

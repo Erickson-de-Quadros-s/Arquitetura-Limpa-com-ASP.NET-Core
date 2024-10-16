@@ -1,5 +1,5 @@
 ﻿using DevFreela.API.Models.Users;
-using DevFreela.Application.Models.User;
+using DevFreela.Application.Models.Users;
 using DevFreela.Core.Entities;
 using DevFreela.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Mvc;
