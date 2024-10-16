@@ -1,6 +1,5 @@
 ﻿using DevFreela.Application.Models.ProjectModel;
 using DevFreela.Application.Models.Result;
-using DevFreela.Core.Entities;
 using DevFreela.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,7 +9,7 @@ namespace DevFreela.Application.Services
     {
         ResultViewModel<List<ProjectItemViewModel>> GetAll(string search = "", int page = 0, int size = 3);
         ResultViewModel<ProjectItemViewModel> GetById(int id);
-        ResultViewModel Insert(CreateProjectInputModel model);
+        ResultViewModel<int> Insert(CreateProjectInputModel model);
         ResultViewModel Update(int id, UpdateProjectInputModel model);
         ResultViewModel Delete(int id);
         ResultViewModel Start(int id);
@@ -84,20 +83,15 @@ namespace DevFreela.Application.Services
             return ResultViewModel<ProjectItemViewModel>.Sucess(model);
         }
 
-        public ResultViewModel Insert(CreateProjectInputModel model)
+        public ResultViewModel<int> Insert(CreateProjectInputModel model)
         {
-            var project = new Project(
-                model.Title,
-                model.Description,
-                model.IdClient,
-                model.IdFreelancer,
-                model.TotalCost
-            );
-            _dbContext.Projects.AddAsync(project);
+            var project = model.ToEntity();
 
-            _dbContext.SaveChangesAsync();
+            _dbContext.Projects.Add(project);
 
-            return ResultViewModel.Sucess();
+            _dbContext.SaveChanges();
+
+            return ResultViewModel<int>.Sucess(project.Id);
         }
 
         public ResultViewModel InsertComment(int id, CreateProjectCommentInputModel model)
@@ -133,10 +127,8 @@ namespace DevFreela.Application.Services
             _dbContext.Update(project);
             _dbContext.SaveChanges();
 
-
             return ResultViewModel.Sucess();
         }
-
 
     }
 }

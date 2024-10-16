@@ -37,7 +37,7 @@ namespace DevFreela.API.Controllers
         }
 
         [HttpPost]
-        public ResultViewModel Post(CreateProjectInputModel model)
+        public ResultViewModel<int> Post(CreateProjectInputModel model)
         {
             return _projectService.Insert(model);
         }
