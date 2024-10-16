@@ -16,7 +16,6 @@ namespace DevFreela.API.Controllers
         public UsersController(DevFreelaDbContext dbContext)
         {
             _dbContext = dbContext;
-
         }
 
         [HttpGet("{id}")]

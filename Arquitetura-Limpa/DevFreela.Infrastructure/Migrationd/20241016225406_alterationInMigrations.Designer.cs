@@ -4,16 +4,19 @@ using DevFreela.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace DevFreela.Infrastructure.Persistence.Migrations.DevFreela.API.Persistence.Migrations
+namespace DevFreela.Infrastructure.Migrationd
 {
     [DbContext(typeof(DevFreelaDbContext))]
-    partial class DevFreelaDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241016225406_alterationInMigrations")]
+    partial class alterationInMigrations
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

@@ -1,9 +1,6 @@
-﻿using DevFreela.Application.Models;
-using DevFreela.Application.Models.ProjectModel;
+﻿using DevFreela.Application.Models.ProjectModel;
 using DevFreela.Application.Models.Result;
 using DevFreela.Application.Services;
-using DevFreela.Core.Entities;
-using DevFreela.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DevFreela.API.Controllers
@@ -12,15 +9,11 @@ namespace DevFreela.API.Controllers
     [Route("api/projects")]
     public class ProjectsController : ControllerBase
     {
-        private readonly FreelanceTotalCostConfig _config;
-        private readonly DevFreelaDbContext _dbContext;
         private readonly IProjectService _projectService;
         public ProjectsController(
-            DevFreelaDbContext dbContext,
             IProjectService projectService
             )
         {
-            _dbContext = dbContext;
             _projectService = projectService;
         }
 
@@ -67,20 +60,10 @@ namespace DevFreela.API.Controllers
         }
 
         [HttpPost("{id}/comments")]
-        public IActionResult PostComment(int id, CreateProjectCommentInputModel model)
+        public ResultViewModel PostComment(int id, CreateProjectCommentInputModel model)
         {
-            var project = _dbContext.Projects.SingleOrDefault(p => p.Id == id);
-            if (project == null)
-            {
-                return NotFound();
-            }
-
-            var comment = new ProjectComment(model.Content, model.IdProject, model.IdUser);
-
-            _dbContext.ProjectComments.Add(comment);
-            _dbContext.SaveChanges();
-
-            return Ok();
+            return _projectService.InsertComment(id, model);
         }
+
     }
 }
