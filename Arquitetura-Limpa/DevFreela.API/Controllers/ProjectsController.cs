@@ -1,6 +1,6 @@
 ﻿using DevFreela.Application.Models.ProjectModel;
 using DevFreela.Application.Models.Result;
-using DevFreela.Application.Services;
+using DevFreela.Application.Services.Projects;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DevFreela.API.Controllers

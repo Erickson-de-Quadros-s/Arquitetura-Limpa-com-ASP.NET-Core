@@ -1,10 +1,11 @@
 ﻿using DevFreela.Application.Models.ProjectModel;
 using DevFreela.Application.Models.Result;
+using DevFreela.Application.Models.Users;
 using DevFreela.Core.Entities;
 using DevFreela.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 
-namespace DevFreela.Application.Services
+namespace DevFreela.Application.Services.Projects
 {
     public class ProjectService : IProjectService
     {

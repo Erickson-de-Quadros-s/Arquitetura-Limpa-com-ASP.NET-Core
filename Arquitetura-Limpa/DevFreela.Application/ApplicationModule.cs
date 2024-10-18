@@ -1,4 +1,5 @@
-﻿using DevFreela.Application.Services;
+﻿using DevFreela.Application.Services.Projects;
+using DevFreela.Application.Services.Users;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace DevFreela.Application
